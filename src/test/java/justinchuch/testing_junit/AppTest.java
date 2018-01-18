@@ -1,6 +1,7 @@
 package justinchuch.testing_junit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
@@ -8,6 +9,7 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
@@ -21,7 +23,7 @@ public class AppTest {
   public void test_print() {
 
     // get the logger instance of the corresponding class
-    ch.qos.logback.classic.Logger testLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(App.class);
+    Logger testLogger = (Logger) LoggerFactory.getLogger(App.class);
 
     // init and instrument the TestAppender
     TestAppender testAppender = new TestAppender();
@@ -45,15 +47,17 @@ public class AppTest {
 
   // custom appender
   private static class TestAppender extends AppenderBase<ILoggingEvent> {
-    private final List<ILoggingEvent> events = new ArrayList<>();
+    private final List<ILoggingEvent> events = Collections.synchronizedList(new ArrayList<>());
 
     private TestAppender() {
       start();
     }
 
     @Override
-    protected synchronized void append(ILoggingEvent event) {
-      events.add(event);
+    protected void append(ILoggingEvent event) {
+      synchronized(events) {
+        events.add(event);
+      }
     }
 
     protected List<ILoggingEvent> getEvents() {
