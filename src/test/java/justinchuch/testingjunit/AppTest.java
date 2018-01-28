@@ -1,4 +1,8 @@
-package justinchuch.testing_junit;
+/**
+ * @author justinchuch
+ *
+ */
+package justinchuch.testingjunit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,22 +24,25 @@ import ch.qos.logback.core.AppenderBase;
 public class AppTest {
 
   @Test
-  public void test_print() {
+  public void testPrint() {
 
-    // get the logger instance of the corresponding class
+    // get the logger instance of the corresponding class,
+    // in this case, justinchuch.testingjunit.App
     Logger testLogger = (Logger) LoggerFactory.getLogger(App.class);
 
     // init and instrument the TestAppender
     TestAppender testAppender = new TestAppender();
     testLogger.addAppender(testAppender);
-    testLogger.setLevel(Level.DEBUG);
+    testLogger.setLevel(Level.DEBUG); // log level
 
-    // run the print method
+    // run the method that we want to capture the log message in the App
     App.print();
 
     // get the events from TestAppender
     List<ILoggingEvent> events = testAppender.getEvents();
 
+    // since there is only one event in this case, so we use events.get(0).
+    // adjust this accordingly!
     String actualMsg = events.get(0).getMessage();
 
     // expected output
@@ -45,7 +52,7 @@ public class AppTest {
   }
 
 
-  // custom appender
+  // Custom appender. To be added into the logger
   private static class TestAppender extends AppenderBase<ILoggingEvent> {
     private final List<ILoggingEvent> events = Collections.synchronizedList(new ArrayList<>());
 
